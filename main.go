@@ -16,9 +16,10 @@ func main() {
 	//Creates session
 	dg, _ := discordgo.New("Bot " + token)
 
-	//Sets up a listener
+	//Sets up listeners
 	dg.AddHandler(sendMessage)
 
+	dg.AddHandler(onTypingStart)
 	//Opens up a connection
 	dg.Open()
 	defer dg.Close()
@@ -38,4 +39,12 @@ func sendMessage(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	//Sends a message
 	s.ChannelMessageSend(m.ChannelID, "Hello there")
+}
+
+func onTypingStart(s *discordgo.Session, t *discordgo.TypingStart) {
+	if t.UserID == s.State.User.ID {
+		return
+	}
+
+	s.ChannelMessageSend(t.ChannelID, "I see you are typing!")
 }
